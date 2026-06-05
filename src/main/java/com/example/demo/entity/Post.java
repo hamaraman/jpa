@@ -1,4 +1,4 @@
-package com.example.zaaaa.entity;
+package com.example.demo.entity;
 
 import jakarta.persistence.*;
 import lombok.*;
@@ -13,10 +13,9 @@ import java.time.LocalDateTime;
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @EntityListeners(AuditingEntityListener.class)
-
 public class Post {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY) // AUTO_INCREMENT
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @Column(nullable = false, length = 100)
@@ -35,16 +34,13 @@ public class Post {
     @LastModifiedDate
     private LocalDateTime updatedAt;
 
-    // 생성 메서드 (정적 팩토리 패턴)
-    public static Post create(String title, String content, String author) {
-        Post post = new Post();
-        post.title = title;
-        post.content = content;
-        post.author = author;
-        return post;
+    @Builder
+    public Post(String title, String content, String author) {
+        this.title = title;
+        this.content = content;
+        this.author = author;
     }
 
-    // 수정 메서드
     public void update(String title, String content) {
         this.title = title;
         this.content = content;
