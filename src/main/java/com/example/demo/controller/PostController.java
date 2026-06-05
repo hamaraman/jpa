@@ -3,39 +3,41 @@ package com.example.demo.controller;
 import com.example.demo.dto.PostDto;
 import com.example.demo.service.PostService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
 @RestController
+@RequestMapping("/api/posts")
 @RequiredArgsConstructor
-@RequestMapping("/api/v1/posts")
 public class PostController {
 
     private final PostService postService;
 
     @PostMapping
-    public Long save(@RequestBody PostDto.Request requestDto) {
-        return postService.save(requestDto);
+    public ResponseEntity<Long> create(@RequestBody PostDto postDto) {
+        return ResponseEntity.ok(postService.createPost(postDto));
     }
 
     @GetMapping
-    public List<PostDto.Response> findAll() {
-        return postService.findAll();
+    public ResponseEntity<List<PostDto>> getAll() {
+        return ResponseEntity.ok(postService.getAllPosts());
     }
 
     @GetMapping("/{id}")
-    public PostDto.Response findById(@PathVariable Long id) {
-        return postService.findById(id);
+    public ResponseEntity<PostDto> get(@PathVariable Long id) {
+        return ResponseEntity.ok(postService.getPost(id));
     }
 
     @PutMapping("/{id}")
-    public Long update(@PathVariable Long id, @RequestBody PostDto.Request requestDto) {
-        return postService.update(id, requestDto);
+    public ResponseEntity<Long> update(@PathVariable Long id, @RequestBody PostDto postDto) {
+        return ResponseEntity.ok(postService.updatePost(id, postDto));
     }
 
     @DeleteMapping("/{id}")
-    public void delete(@PathVariable Long id) {
-        postService.delete(id);
+    public ResponseEntity<Void> delete(@PathVariable Long id) {
+        postService.deletePost(id);
+        return ResponseEntity.ok().build();
     }
 }

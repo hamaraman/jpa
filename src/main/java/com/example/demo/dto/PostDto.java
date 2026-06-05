@@ -1,34 +1,33 @@
 package com.example.demo.dto;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import com.example.demo.entity.Post;
+import lombok.*;
 
-import java.time.LocalDateTime;
-
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
+@Builder
 public class PostDto {
+    private Long id;
+    private String title;
+    private String content;
+    private String author;
 
-    @Getter
-    @NoArgsConstructor
-    @AllArgsConstructor
-    @Builder
-    public static class Request {
-        private String title;
-        private String content;
-        private String author;
+    public Post toEntity() {
+        return Post.builder()
+                .title(title)
+                .content(content)
+                .author(author)
+                .build();
     }
 
-    @Getter
-    @NoArgsConstructor
-    @AllArgsConstructor
-    @Builder
-    public static class Response {
-        private Long id;
-        private String title;
-        private String content;
-        private String author;
-        private LocalDateTime createdAt;
-        private LocalDateTime updatedAt;
+    public static PostDto fromEntity(Post post) {
+        return PostDto.builder()
+                .id(post.getId())
+                .title(post.getTitle())
+                .content(post.getContent())
+                .author(post.getAuthor())
+                .build();
     }
 }

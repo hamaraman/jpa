@@ -18,50 +18,39 @@ public class PostService {
     private final PostRepository postRepository;
 
     @Transactional
-    public Long save(PostDto.Request requestDto) {
-        Post post = Post.builder()
-                .title(requestDto.getTitle())
-                .content(requestDto.getContent())
-                .author(requestDto.getAuthor())
-                .build();
+    public Long createPost(PostDto postDto) {
+        Post post = postDto.toEntity();
         return postRepository.save(post).getId();
     }
 
-    public List<PostDto.Response> findAll() {
+    public List<PostDto> getAllPosts() {
         return postRepository.findAll().stream()
-                .map(this::convertToDto)
+                .map(PostDto::fromEntity)
                 .collect(Collectors.toList());
     }
 
-    public PostDto.Response findById(Long id) {
+    public PostDto getPost(Long id) {
         Post post = postRepository.findById(id)
-                .orElseThrow(() -> new IllegalArgumentException("해당 게시글이 없습니다. id=" + id));
-        return convertToDto(post);
+                .orElseThrow(() -> new IllegalArgumentException("Post not found: " + id));
+        return PostDto.fromEntity(post);
     }
 
     @Transactional
-    public Long update(Long id, PostDto.Request requestDto) {
+    public Long updatePost(Long id, PostDto postDto) {
         Post post = postRepository.findById(id)
-                .orElseThrow(() -> new IllegalArgumentException("해당 게시글이 없습니다. id=" + id));
-        post.update(requestDto.getTitle(), requestDto.getContent());
+                .orElseThrow(() -> new IllegalArgumentException("Post not found: " + id));
+        
+        post.setTitle(postDto.getTitle());
+        post.setContent(postDto.getContent());
+        post.setAuthor(postDto.getAuthor());
+        
         return id;
     }
 
     @Transactional
-    public void delete(Long id) {
+    public void deletePost(Long id) {
         Post post = postRepository.findById(id)
-                .orElseThrow(() -> new IllegalArgumentException("해당 게시글이 없습니다. id=" + id));
+                .orElseThrow(() -> new IllegalArgumentException("Post not found: " + id));
         postRepository.delete(post);
-    }
-
-    private PostDto.Response convertToDto(Post post) {
-        return PostDto.Response.builder()
-                .id(post.getId())
-                .title(post.getTitle())
-                .content(post.getContent())
-                .author(post.getAuthor())
-                .createdAt(post.getCreatedAt())
-                .updatedAt(post.getUpdatedAt())
-                .build();
     }
 }
